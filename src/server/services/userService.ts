@@ -18,27 +18,29 @@ export const getUsers = async () => {
   });
 };
 
-export const createUser = async (data: {
-  name?: string;
-  email: string;
-  password: string;
-  role?: Role;
-  phone?: string;
-  avatarUrl?: string;
-}) => {
-  const hashedPassword = await bcrypt.hash(data.password, 10);
+export const createUser = async (data: { name?: string; email: string; password: string; role?: Role; phone?: string; avatarUrl?: string; }) => {
+  const hashedPassword = await bcrypt.hash(data.password, 12);
 
-  return prisma.user.create({
-    data: {
-      name: data.name,
-      email: data.email,
-      password: hashedPassword,
-      role: data.role,
-      phone: data.phone,
-      avatarUrl: data.avatarUrl,
-    },
-  });
+  try {
+    return await prisma.user.create({
+      data: {
+        name: data.name,
+        email: data.email,
+        password: hashedPassword,
+        role: data.role,
+        phone: data.phone,
+        avatarUrl: data.avatarUrl,
+      },
+    });
+  } catch (error: any) {
+    // Prisma unique constraint
+    if (error.code === 'P2002') {
+      throw new Error('EmailAlreadyExists');
+    }
+    throw error;
+  }
 };
+
 
 export const updateUser = async (
   id: number,

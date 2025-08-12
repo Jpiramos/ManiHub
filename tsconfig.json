@@ -9,11 +9,11 @@
     "esModuleInterop": true,
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-     "allowImportingTsExtensions": true,
+    "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-     "baseUrl": "./src",
+    "baseUrl": ".",
     "incremental": true,
     "plugins": [
       {
@@ -21,10 +21,11 @@
       }
     ],
     "paths": {
-      "@client/*": ["client/*"],
-      "@server/*": ["server/*"]
-    }
+      "@client/*": ["src/client/*"],
+      "@server/*": ["src/server/*"]
+    },
+    "types": ["next", "node"]   
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": ["next-env.d.ts","global.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]
 }
