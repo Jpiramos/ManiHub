@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// Usuário do sistema: clientes, manicures e admins
+model User {
+  id               Int       @id @default(autoincrement())
+  name             String?
+  email            String    @unique
+  password         String
+  phone            String?   // telefone opcional
+  avatarUrl        String?   // foto do perfil opcional
+  role             Role      @default(CLIENT)
+  isActive         Boolean   @default(true)  // para ativar/desativar usuário sem apagar
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  bookings         Booking[]         // reservas feitas pelo usuário (cliente)
+  manicureBookings Booking[] @relation("ManicureBookings") // reservas associadas a manicure, se for manicure
+}
+
+// Reserva/agendamento de serviço
+model Booking {
+  id                 Int           @id @default(autoincrement())
+  date               DateTime      // data e hora da reserva
+  service            String        // nome do serviço agendado (ex: manicure simples)
+  user               User          @relation(fields: [userId], references: [id])
+  userId             Int
+  manicure           User?         @relation("ManicureBookings", fields: [manicureId], references: [id])
+  manicureId         Int?          // manicure responsável pela reserva, pode ser null
+  status             BookingStatus @default(PENDING)
+  notes              String?       // observações adicionais
+  cancellationReason String?       // motivo do cancelamento, se houver
+  price              Float?        // preço cobrado pelo serviço
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+}
+
+// Papéis dos usuários
+enum Role {
+  CLIENT
+  MANICURE
+  ADMIN
+}
+
+// Status da reserva
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELED
+}
