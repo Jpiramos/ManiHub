@@ -2,11 +2,13 @@
 
 import { useState } from 'react';
 //@ts-ignore
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { Button } from "../../components/ui/button.tsx";
+import { Card } from "../../components/ui/card.tsx";
+import { Input } from "../../components/ui/input.tsx";
+import { Label } from "../../components/ui/label.tsx";
 
 export default function LoginPage() {
-  const router = useRouter();
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -29,7 +31,8 @@ export default function LoginPage() {
         throw new Error(data?.message || 'Erro ao fazer login');
       }
 
-      router.push('/');
+      // Navegação no Next.js 13+ (App Router)
+      window.location.href = '/'; 
     } catch (err: any) {
       setError(err.message || 'Erro desconhecido');
     } finally {
@@ -38,82 +41,69 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-100 via-pink-200 to-purple-100 p-6">
-      <div className="bg-white rounded-3xl shadow-lg w-full max-w-sm p-10 sm:p-12">
-        <h1 className="text-4xl font-extrabold text-pink-600 text-center mb-8 tracking-wide">
-          Bem-vinda ao Manihub
-        </h1>
-
-        <form onSubmit={handleSubmit} className="space-y-7">
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-pink-700 mb-2"
-            >
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              placeholder="exemplo@email.com"
-              className="w-full rounded-xl border border-pink-300 bg-pink-50 px-5 py-3
-                text-pink-900 placeholder-pink-400
-                focus:outline-none focus:ring-4 focus:ring-pink-300 focus:border-pink-400
-                transition duration-200"
-            />
+    <main className="min-h-screen flex items-center justify-center bg-gradient-background p-6">
+      <div className="w-full max-w-md">
+        <Card className="bg-gradient-card border-0 shadow-elegant p-8 rounded-2xl">
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-bold bg-gradient-hero bg-clip-text text-transparent mb-2">
+              ManiHub
+            </h1>
+            <p className="text-muted-foreground text-lg">Bem-vinda de volta</p>
           </div>
 
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-pink-700 mb-2"
-            >
-              Senha
-            </label>
-            <input
-              id="password"
-              type="password"
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              placeholder="••••••••"
-              className="w-full rounded-xl border border-pink-300 bg-pink-50 px-5 py-3
-                text-pink-900 placeholder-pink-400
-                focus:outline-none focus:ring-4 focus:ring-pink-300 focus:border-pink-400
-                transition duration-200"
-            />
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-sm font-medium text-foreground">
+                Email
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                placeholder="exemplo@email.com"
+                className="rounded-xl border-border bg-background/50 focus:bg-background transition-colors"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="password" className="text-sm font-medium text-foreground">
+                Senha
+              </Label>
+              <Input
+                id="password"
+                type="password"
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                placeholder="••••••••"
+                className="rounded-xl border-border bg-background/50 focus:bg-background transition-colors"
+              />
+            </div>
+
+            {error && (
+              <div className="text-destructive font-medium text-center text-sm bg-destructive/10 py-3 px-4 rounded-lg">
+                {error}
+              </div>
+            )}
+
+            <Button type="submit" disabled={loading} variant="hero" className="w-full">
+              {loading ? 'Entrando...' : 'Entrar'}
+            </Button>
+          </form>
+
+          <div className="mt-8 text-center">
+            <p className="text-muted-foreground text-sm">
+              Não tem conta?{' '}
+              <Link href="/signup" className="font-semibold text-primary hover:text-accent transition-colors">
+                Cadastre-se aqui
+              </Link>
+            </p>
           </div>
-
-          {error && (
-            <p className="text-red-600 font-semibold text-center">{error}</p>
-          )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            className={`w-full py-3 rounded-xl font-semibold text-white
-              transition-colors duration-200
-              ${
-                loading
-                  ? 'bg-pink-300 cursor-not-allowed'
-                  : 'bg-pink-500 hover:bg-pink-600'
-              }`}
-          >
-            {loading ? 'Entrando...' : 'Entrar'}
-          </button>
-        </form>
-
-        <p className="mt-8 text-center text-pink-700 text-sm select-none">
-          Não tem conta?{' '}
-          <a href="/signup" className="font-semibold underline hover:text-pink-900">
-            Cadastre-se aqui
-          </a>
-        </p>
+        </Card>
       </div>
     </main>
   );

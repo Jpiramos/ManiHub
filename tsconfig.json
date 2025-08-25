@@ -22,7 +22,8 @@
     ],
     "paths": {
       "@client/*": ["src/client/*"],
-      "@server/*": ["src/server/*"]
+      "@server/*": ["src/server/*"],
+       "@/*": ["./src/*"]
     },
     "types": ["next", "node"]   
   },

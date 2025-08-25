@@ -19,6 +19,10 @@ export const createUser = async (req: Request, res: Response) => {
     if (!email || !password) {
       return res.status(400).json({ message: 'Email e senha são obrigatórios' });
     }
+    const existingUser = await userService.getUserByEmail(email);
+    if (existingUser) {
+      return res.status(400).json({ message: 'Email já cadastrado' });
+    }
 
     // Validar e converter role para enum Role
     let userRole: Role | undefined;

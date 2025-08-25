@@ -13,7 +13,7 @@ model User {
   name             String?
   email            String    @unique
   password         String
-  phone            String?   // telefone opcional
+  phone            String?   @unique
   avatarUrl        String?   // foto do perfil opcional
   role             Role      @default(CLIENT)
   isActive         Boolean   @default(true)  // para ativar/desativar usuário sem apagar

@@ -18,6 +18,11 @@ export const getUsers = async () => {
   });
 };
 
+export const getUserByEmail = async (email: string) => {
+  return await prisma.user.findUnique({ where: { email } });
+};
+
+
 export const createUser = async (data: { name?: string; email: string; password: string; role?: Role; phone?: string; avatarUrl?: string; }) => {
   const hashedPassword = await bcrypt.hash(data.password, 12);
 
@@ -27,19 +32,26 @@ export const createUser = async (data: { name?: string; email: string; password:
         name: data.name,
         email: data.email,
         password: hashedPassword,
-        role: data.role,
+        role: "CLIENT",
         phone: data.phone,
         avatarUrl: data.avatarUrl,
       },
     });
   } catch (error: any) {
     // Prisma unique constraint
-    if (error.code === 'P2002') {
-      throw new Error('EmailAlreadyExists');
+    if (error.code === "P2002") {
+      if (error.meta?.target?.includes("email")) {
+        throw new Error("EmailAlreadyExists");
+      }
+      if (error.meta?.target?.includes("phone")) {
+        throw new Error("PhoneAlreadyExists");
+      }
     }
     throw error;
   }
 };
+
+
 
 
 export const updateUser = async (
